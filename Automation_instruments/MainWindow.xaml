@@ -1,0 +1,373 @@
+﻿<Window
+    x:Class="Automation_instruments.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:Automation_instruments"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Title="Automation System"
+    Width="800"
+    Height="500"
+    MinWidth="800"
+    MinHeight="500"
+    Background="{DynamicResource MaterialDesignPaper}"
+    MouseDown="Window_MouseLeftButtonDown"
+    MouseMove="PnMouseMove"
+    MouseUp="Window_MouseUp"
+    TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+    WindowStartupLocation="CenterScreen"
+    WindowStyle="SingleBorderWindow">
+    <Window.Resources>
+        <Style BasedOn="{StaticResource MaterialDesignDataGrid}" TargetType="{x:Type DataGrid}">
+            <Setter Property="ColumnHeaderStyle" Value="{DynamicResource MyColumnHeaderStyle}" />
+            <Setter Property="CanUserSortColumns" Value="True" />
+            <Setter Property="IsReadOnly" Value="True" />
+            <Setter Property="CanUserAddRows" Value="False" />
+            <Setter Property="AlternatingRowBackground" Value="#454545" />
+            <Setter Property="SelectionMode" Value="Single" />
+            <Setter Property="MinColumnWidth" Value="150" />
+            <Setter Property="AutoGenerateColumns" Value="True" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+        </Style>
+
+        <Storyboard x:Key="MenuOpen">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="GridMenu" Storyboard.TargetProperty="(FrameworkElement.Width)">
+                <EasingDoubleKeyFrame KeyTime="0" Value="0" />
+                <EasingDoubleKeyFrame KeyTime="0:0:0.3" Value="250" />
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+
+        <Storyboard x:Key="MenuClose">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="GridMenu" Storyboard.TargetProperty="(FrameworkElement.Width)">
+                <EasingDoubleKeyFrame KeyTime="0" Value="240" />
+                <EasingDoubleKeyFrame KeyTime="0:0:0.3" Value="0" />
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+
+    </Window.Resources>
+    <Window.Triggers>
+        <EventTrigger RoutedEvent="ButtonBase.Click" SourceName="BtnMenuOpen">
+            <BeginStoryboard Storyboard="{StaticResource MenuOpen}" />
+        </EventTrigger>
+        <EventTrigger RoutedEvent="ButtonBase.Click" SourceName="BtnMenuClose">
+            <BeginStoryboard Storyboard="{StaticResource MenuClose}" />
+        </EventTrigger>
+        <EventTrigger RoutedEvent="PreviewMouseLeftButtonUp" SourceName="Caliber">
+            <BeginStoryboard Storyboard="{StaticResource MenuClose}" />
+        </EventTrigger>
+        <EventTrigger RoutedEvent="PreviewMouseLeftButtonUp" SourceName="Clamp">
+            <BeginStoryboard Storyboard="{StaticResource MenuClose}" />
+        </EventTrigger>
+        <EventTrigger RoutedEvent="PreviewMouseLeftButtonUp" SourceName="Plug">
+            <BeginStoryboard Storyboard="{StaticResource MenuClose}" />
+        </EventTrigger>
+        <EventTrigger RoutedEvent="PreviewMouseLeftButtonUp" SourceName="Ring">
+            <BeginStoryboard Storyboard="{StaticResource MenuClose}" />
+        </EventTrigger>
+        <EventTrigger RoutedEvent="PreviewMouseLeftButtonUp" SourceName="Template">
+            <BeginStoryboard Storyboard="{StaticResource MenuClose}" />
+        </EventTrigger>
+    </Window.Triggers>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0">
+            <materialDesign:ColorZone Mode="PrimaryDark">
+                <DockPanel>
+                    <StackPanel
+                        VerticalAlignment="Center"
+                        materialDesign:RippleAssist.IsCentered="True"
+                        Orientation="Horizontal">
+                        <Button
+                            x:Name="BtnMenuOpen"
+                            Width="60"
+                            Margin="5,0,0,0"
+                            Click="BtnMenuOpen_Click"
+                            Style="{StaticResource MaterialDesignFlatButton}"
+                            ToolTip="Открыть Меню">
+                            <materialDesign:PackIcon
+                                Width="30"
+                                Height="30"
+                                Margin="-5"
+                                Kind="Menu" />
+                        </Button>
+                        <Button
+                            x:Name="BtnMenuClose"
+                            Width="60"
+                            Margin="5,0,0,0"
+                            Click="BtnMenuClose_Click"
+                            Style="{StaticResource MaterialDesignFlatButton}"
+                            ToolTip="Скрыть Меню"
+                            Visibility="Collapsed">
+                            <materialDesign:PackIcon
+                                Width="30"
+                                Height="30"
+                                Margin="-5"
+                                Kind="ArrowLeft" />
+                        </Button>
+
+                        <materialDesign:ColorZone
+                            Margin="8,4,0,4"
+                            Padding="8,4,8,4"
+                            Panel.ZIndex="1"
+                            materialDesign:ShadowAssist.ShadowDepth="Depth1"
+                            CornerRadius="5"
+                            Mode="Standard">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition />
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+
+                                <TextBox
+                                    x:Name="Tb_SearchKey"
+                                    Grid.RowSpan="2"
+                                    Grid.Column="1"
+                                    MinWidth="200"
+                                    Margin="5,0,0,0"
+                                    VerticalAlignment="Center"
+                                    materialDesign:HintAssist.Hint="Поиск по типу"
+                                    materialDesign:TextFieldAssist.DecorationVisibility="Hidden"
+                                    BorderThickness="0"
+                                    TextChanged="Tb_SearchKey_TextChanged" />
+                            </Grid>
+                        </materialDesign:ColorZone>
+                        <materialDesign:ColorZone
+                            Margin="8,4,0,4"
+                            materialDesign:ShadowAssist.ShadowDepth="Depth1"
+                            CornerRadius="5"
+                            Mode="Standard" />
+                        <materialDesign:ColorZone
+                            Margin="8,4,0,4"
+                            materialDesign:ShadowAssist.ShadowDepth="Depth1"
+                            CornerRadius="5"
+                            Mode="Dark">
+                            <Button
+                                x:Name="Btn_AddRow"
+                                Grid.Column="1"
+                                Click="Btn_AddRow_Click"
+                                Foreground="LawnGreen"
+                                Style="{StaticResource MaterialDesignFlatButton}"
+                                ToolTip="Добавить запись">
+                                <WrapPanel>
+                                    <materialDesign:PackIcon
+                                        Width="20"
+                                        Height="20"
+                                        Kind="AddBox" />
+                                </WrapPanel>
+                            </Button>
+                        </materialDesign:ColorZone>
+                        <materialDesign:ColorZone
+                            Margin="8,4,0,4"
+                            materialDesign:ShadowAssist.ShadowDepth="Depth1"
+                            CornerRadius="5"
+                            Mode="Standard">
+                            <Button
+                                x:Name="Btn_RemoveRow"
+                                Grid.Column="1"
+                                Click="Btn_RemoveRow_Click"
+                                Foreground="OrangeRed"
+                                Style="{StaticResource MaterialDesignFlatButton}"
+                                ToolTip="Удалить запись">
+                                <WrapPanel>
+                                    <materialDesign:PackIcon
+                                        Width="20"
+                                        Height="20"
+                                        Kind="MinusBox" />
+                                </WrapPanel>
+                            </Button>
+                        </materialDesign:ColorZone>
+                    </StackPanel>
+
+                    <materialDesign:ColorZone
+                        Margin="8,4,0,4"
+                        HorizontalAlignment="Right"
+                        materialDesign:ShadowAssist.ShadowDepth="Depth1"
+                        CornerRadius="10"
+                        Mode="Standard">
+                        <StackPanel
+                            HorizontalAlignment="Stretch"
+                            FlowDirection="RightToLeft"
+                            Orientation="Horizontal">
+                            <Button
+                                x:Name="Btn_Exit"
+                                Grid.Column="1"
+                                Height="Auto"
+                                HorizontalAlignment="Right"
+                                Click="Btn_Exit_Click"
+                                Style="{StaticResource MaterialDesignFlatButton}"
+                                ToolTip="Закрыть">
+                                <materialDesign:PackIcon
+                                    Width="35"
+                                    Height="Auto"
+                                    VerticalAlignment="Center"
+                                    Foreground="OrangeRed"
+                                    Kind="Power" />
+                            </Button>
+                            <Button
+                                x:Name="Btn_About"
+                                Grid.Column="1"
+                                Height="Auto"
+                                Click="Btn_About_Click"
+                                Style="{StaticResource MaterialDesignFlatButton}"
+                                ToolTip="Информация о программе">
+                                <materialDesign:PackIcon
+                                    Width="35"
+                                    Height="Auto"
+                                    VerticalAlignment="Center"
+                                    Kind="About" />
+                            </Button>
+                            <Button
+                                x:Name="Btn_Print"
+                                Grid.Column="1"
+                                Height="Auto"
+                                Click="Btn_Print_Click"
+                                Style="{StaticResource MaterialDesignFlatButton}"
+                                ToolTip="Печать">
+                                <materialDesign:PackIcon
+                                    Width="35"
+                                    Height="Auto"
+                                    VerticalAlignment="Center"
+                                    Kind="Printer" />
+                            </Button>
+                            <Button
+                                x:Name="Btn_Save"
+                                Grid.Column="1"
+                                Height="Auto"
+                                Click="Btn_Save_Click"
+                                Style="{StaticResource MaterialDesignFlatButton}"
+                                ToolTip="Сохранить">
+                                <materialDesign:PackIcon
+                                    Width="35"
+                                    Height="Auto"
+                                    VerticalAlignment="Center"
+                                    Kind="DatabaseTick" />
+                            </Button>
+                        </StackPanel>
+                    </materialDesign:ColorZone>
+                </DockPanel>
+
+            </materialDesign:ColorZone>
+        </Grid>
+
+        <Grid Grid.Row="1">
+            <ScrollViewer
+                x:Name="mainScrollViewer"
+                HorizontalScrollBarVisibility="Auto"
+                VerticalScrollBarVisibility="Auto">
+                <materialDesign:ColorZone Mode="Standard">
+                    <DataGrid
+                        x:Name="MainDataGrid"
+                        AutoGenerateColumns="True"
+                        PreviewMouseWheel="MainDataGrid_PreviewMouseWheel" />
+                </materialDesign:ColorZone>
+            </ScrollViewer>
+        </Grid>
+
+
+        <Grid
+            x:Name="GridMenu"
+            Grid.Row="1"
+            Width="0"
+            HorizontalAlignment="Left">
+            <materialDesign:ColorZone
+                Grid.Column="0"
+                Width="Auto"
+                CornerRadius="5"
+                Mode="PrimaryDark">
+                <StackPanel
+                    Grid.Column="0"
+                    Margin="5"
+                    Orientation="Vertical">
+                    <TextBlock
+                        Padding="5"
+                        HorizontalAlignment="Center"
+                        FontSize="14"
+                        Foreground="Wheat">
+                        Списки инструментов
+                    </TextBlock>
+                    <ListView x:Name="ListMenu" SelectionMode="Single">
+
+                        <ListViewItem
+                            x:Name="Caliber"
+                            x:Uid="Калибры"
+                            Margin="5"
+                            PreviewMouseLeftButtonUp="Caliber_PreviewMouseLeftButtonUp">
+                            <WrapPanel>
+                                <materialDesign:PackIcon
+                                    Width="25"
+                                    Height="25"
+                                    Kind="Screwdriver" />
+                                <TextBlock Margin="2" Text="Калибры" />
+                            </WrapPanel>
+                        </ListViewItem>
+
+                        <ListViewItem
+                            x:Name="Clamp"
+                            x:Uid="Скобы"
+                            Margin="5"
+                            PreviewMouseLeftButtonUp="Clamp_PreviewMouseLeftButtonUp">
+                            <WrapPanel>
+                                <materialDesign:PackIcon
+                                    Width="25"
+                                    Height="25"
+                                    Kind="Horseshoe" />
+                                <TextBlock Margin="2" Text="Скобы" />
+                            </WrapPanel>
+                        </ListViewItem>
+
+                        <ListViewItem
+                            x:Name="Plug"
+                            x:Uid="Пробки"
+                            Margin="5"
+                            PreviewMouseLeftButtonUp="Plug_PreviewMouseLeftButtonUp">
+                            <WrapPanel>
+                                <materialDesign:PackIcon
+                                    Width="25"
+                                    Height="25"
+                                    Kind="CheckboxMultipleBlankCircle" />
+                                <TextBlock Margin="2" Text="Пробки" />
+                            </WrapPanel>
+                        </ListViewItem>
+
+                        <ListViewItem
+                            x:Name="Ring"
+                            x:Uid="Кольца"
+                            Margin="5"
+                            PreviewMouseLeftButtonUp="Ring_PreviewMouseLeftButtonUp">
+                            <WrapPanel>
+                                <materialDesign:PackIcon
+                                    Width="25"
+                                    Height="25"
+                                    Kind="CheckboxMultipleBlankCircleOutline" />
+                                <TextBlock Margin="2" Text="Кольца" />
+                            </WrapPanel>
+                        </ListViewItem>
+                        <ListViewItem
+                            x:Name="Template"
+                            x:Uid="Шаблоны"
+                            Margin="5"
+                            PreviewMouseLeftButtonUp="Template_PreviewMouseLeftButtonUp">
+                            <WrapPanel>
+                                <materialDesign:PackIcon
+                                    Width="25"
+                                    Height="25"
+                                    Kind="Apps" />
+                                <TextBlock Margin="2" Text="Шаблоны" />
+                            </WrapPanel>
+                        </ListViewItem>
+
+                    </ListView>
+                </StackPanel>
+            </materialDesign:ColorZone>
+        </Grid>
+    </Grid>
+</Window>
